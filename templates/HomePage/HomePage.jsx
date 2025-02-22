@@ -1,26 +1,33 @@
-import { useState } from 'react';
+import { useState } from "react";
 
-import { Search } from '@mui/icons-material';
-import { Box, Grid, TextField, Typography } from '@mui/material';
-import Image from 'next/image';
+import { Search } from "@mui/icons-material";
+import {
+  Box,
+  Grid,
+  TextField,
+  Typography,
+  InputAdornment,
+} from "@mui/material";
+import Image from "next/image";
 
-import TabButton from '@/components/TabButton';
+import TabButton from "@/components/TabButton";
 
-import Star from '@/assets/svg/Star_3.svg';
-import ImageURLs from '@/assets/urls';
+import Star from "@/assets/svg/Star_3.svg";
+import ImageURLs from "@/assets/urls";
 
-import styles from './styles';
+import styles from "./styles";
 
-import disableFilters from '@/libs/constants/disableFilters';
-import { ToolsListingContainer } from '@/tools';
+import disableFilters from "@/libs/constants/disableFilters";
+import { ToolsListingContainer } from "@/tools";
 
-const TABS = ['All', 'Questions', 'Planning', 'Feedback'];
+const TABS = ["All", "Questions", "Planning", "Feedback"];
 
 const HomePage = (props) => {
   const { data: unsortedData, loading } = props;
   const data = [...(unsortedData || [])].sort((a, b) => a.id - b.id);
 
   const [currentTab, setCurrentTab] = useState(TABS[0]);
+  const [sortBy, setSortBy] = useState("id");
 
   const renderWelcomeBanner = () => {
     return (
@@ -39,10 +46,10 @@ const HomePage = (props) => {
 
         <Grid>
           <Typography {...styles.titleProps}>
-            Hello! Welcome to Marvel AI Tools. 👋
+            Hello! Welcome to Marve AI Tools. 👋
           </Typography>
           <Typography {...styles.subtitleProps}>
-            Made for{' '}
+            Made for{" "}
             <Typography {...styles.highlightTextProps}>educators. </Typography>
             Hello! I&apos;m Marvel AI, your AI teaching assistant. We are here
             to support you on your journey as a <b>teacher</b>, <b>mentor</b>,
@@ -84,11 +91,46 @@ const HomePage = (props) => {
   return (
     <Grid {...styles.mainGridProps}>
       {renderWelcomeBanner()}
-      {!disableFilters && renderFilters()}{' '}
+      {!disableFilters && renderFilters()}{" "}
+      <Grid
+        container
+        alignItems="center"
+        justifyContent="space-between"
+        sx={{ mb: 2 }}
+      >
+        <TextField
+          placeholder="Search for a tool..."
+          variant="outlined"
+          size="small"
+          sx={{ width: "300px" }}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <Search />
+              </InputAdornment>
+            ),
+          }}
+        />
+        <Box>
+          <Typography component="span" sx={{ mr: 1 }}>
+            Sort by:
+          </Typography>
+          <select
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+            style={{ padding: "4px 8px" }}
+          >
+            <option value="id">Default</option>
+            <option value="name">Name</option>
+            <option value="recent">Recent</option>
+          </select>
+        </Box>
+      </Grid>
       <ToolsListingContainer
         data={data}
         loading={loading}
         category="Marvel Tools"
+        sortBy={sortBy}
       />
     </Grid>
   );
