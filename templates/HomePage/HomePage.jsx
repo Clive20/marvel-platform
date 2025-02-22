@@ -6,7 +6,8 @@ import {
   Grid,
   TextField,
   Typography,
-  InputAdornment,
+  Select,
+  MenuItem,
 } from "@mui/material";
 import Image from "next/image";
 
@@ -91,39 +92,19 @@ const HomePage = (props) => {
   return (
     <Grid {...styles.mainGridProps}>
       {renderWelcomeBanner()}
-      {!disableFilters && renderFilters()}{" "}
-      <Grid
-        container
-        alignItems="center"
-        justifyContent="space-between"
-        sx={{ mb: 2 }}
-      >
-        <TextField
-          placeholder="Search for a tool..."
-          variant="outlined"
-          size="small"
-          sx={{ width: "300px" }}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <Search />
-              </InputAdornment>
-            ),
-          }}
-        />
-        <Box>
-          <Typography component="span" sx={{ mr: 1 }}>
-            Sort by:
-          </Typography>
-          <select
+      {!disableFilters && renderFilters()}
+      <Grid {...styles.searchSortContainerProps}>
+        <TextField {...styles.searchFieldProps} />
+        <Box {...styles.sortBoxProps}>
+          <Select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value)}
-            style={{ padding: "4px 8px" }}
+            {...styles.sortSelectProps}
           >
-            <option value="id">Default</option>
-            <option value="name">Name</option>
-            <option value="recent">Recent</option>
-          </select>
+            <MenuItem value="id">Default</MenuItem>
+            <MenuItem value="name">Name</MenuItem>
+            <MenuItem value="recent">Recent</MenuItem>
+          </Select>
         </Box>
       </Grid>
       <ToolsListingContainer
