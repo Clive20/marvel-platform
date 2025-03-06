@@ -93,10 +93,10 @@ const styles = {
     sx: {
       width: "254px",
       ".MuiInputBase-root": {
-        border: "1.63px solid #65417D",
+        border: "1.63px solid #AC92FFD",
         borderRadius: "20px",
         background: "transparent",
-        color: "#BDBDBD",
+        color: "#AC92FF",
         justifyContent: "center",
         padding: "0 10px",
         gap: "10px",
@@ -111,7 +111,7 @@ const styles = {
         border: "none",
       },
       svg: {
-        color: "#6E6D73",
+        color: "#AC92FF",
       },
     },
   }),
@@ -133,10 +133,10 @@ const styles = {
     sx: {
       width: "300px",
       ".MuiInputBase-root": {
-        border: "1.63px solid #65417D",
+        border: "1.63px solid #AC92FF",
         borderRadius: "20px",
         background: "transparent",
-        color: "#BDBDBD",
+        color: "#AC92FF",
         height: "40px",
         display: "flex",
         alignItems: "center",
@@ -153,7 +153,7 @@ const styles = {
     InputProps: {
       startAdornment: (
         <InputAdornment position="start">
-          <Search sx={{ color: "#6E6D73" }} />
+          <Search sx={{ color: "#AC92FF" }} />
         </InputAdornment>
       ),
     },
@@ -177,10 +177,10 @@ const styles = {
     size: "small",
     sx: {
       ".MuiSelect-select": {
-        border: "1.63px solid #65417D",
+        border: "1.63px solid #AC92FF",
         borderRadius: "20px",
         background: "transparent",
-        color: "#BDBDBD",
+        color: "#AC92FF",
         padding: "8px 32px 8px 16px",
         fontFamily: "Satoshi Bold",
         fontSize: "14px",

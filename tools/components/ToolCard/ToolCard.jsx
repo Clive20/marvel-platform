@@ -1,11 +1,12 @@
-import { AutoAwesome } from '@mui/icons-material';
-import { Card, Chip, Grid, Typography } from '@mui/material';
+import { AutoAwesome, Star, StarBorder } from "@mui/icons-material";
+import { Card, Chip, Grid, Typography, IconButton } from "@mui/material";
+import { useState } from "react";
 
-import { useRouter } from 'next/router';
+import { useRouter } from "next/router";
 
-import styles from './styles';
+import styles from "./styles";
 
-import { TOOLS_ID } from '@/tools/libs/constants/tools';
+import { TOOLS_ID } from "@/tools/libs/constants/tools";
 
 /**
  * Returns a Tool Card component with an image and a chip displaying the amount of coins.
@@ -20,11 +21,12 @@ import { TOOLS_ID } from '@/tools/libs/constants/tools';
  */
 const ToolCard = (props) => {
   const { id, maskedToolUrl, backgroundImgURL, name, description } = props;
+  const [isFavorite, setIsFavorite] = useState(false);
 
   // Check if TOOLS_ID is an object and id is present
   const isPublished =
     TOOLS_ID &&
-    typeof TOOLS_ID === 'object' &&
+    typeof TOOLS_ID === "object" &&
     Object.values(TOOLS_ID).includes(id);
 
   const router = useRouter();
@@ -33,6 +35,12 @@ const ToolCard = (props) => {
     if (isPublished) {
       router.push(`/${maskedToolUrl}`);
     }
+  };
+
+  const handleFavorite = (event) => {
+    event.stopPropagation();
+    setIsFavorite(!isFavorite);
+    // Here you would also want to save this to your backend/localStorage
   };
 
   const renderTitle = () => {
@@ -44,12 +52,22 @@ const ToolCard = (props) => {
     );
   };
 
-  const renderLabel = () => {
+  const renderFooter = () => {
     return (
-      <Chip
-        icon={isPublished ? <AutoAwesome /> : null}
-        {...styles.labelProps(isPublished)}
-      />
+      <Grid
+        container
+        justifyContent="space-between"
+        alignItems="center"
+        width="100%"
+      >
+        <Chip
+          icon={isPublished ? <AutoAwesome /> : null}
+          {...styles.labelProps(isPublished)}
+        />
+        <IconButton onClick={handleFavorite} sx={{ color: "#AC92FF" }}>
+          {isFavorite ? <Star /> : <StarBorder />}
+        </IconButton>
+      </Grid>
     );
   };
 
@@ -59,7 +77,7 @@ const ToolCard = (props) => {
         <Grid {...styles.imageProps(backgroundImgURL)} />
         <Grid {...styles.toolDetailsGridProps}>
           {renderTitle()}
-          {renderLabel()}
+          {renderFooter()}
         </Grid>
       </Card>
     </Grid>

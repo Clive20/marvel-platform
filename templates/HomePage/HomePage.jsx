@@ -29,6 +29,17 @@ const HomePage = (props) => {
 
   const [currentTab, setCurrentTab] = useState(TABS[0]);
   const [sortBy, setSortBy] = useState("id");
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const handleSearch = (event) => {
+    setSearchQuery(event.target.value);
+  };
+
+  const filteredData = data.filter(
+    (item) =>
+      item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.description.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   const renderWelcomeBanner = () => {
     return (
@@ -94,7 +105,11 @@ const HomePage = (props) => {
       {renderWelcomeBanner()}
       {!disableFilters && renderFilters()}
       <Grid {...styles.searchSortContainerProps}>
-        <TextField {...styles.searchFieldProps} />
+        <TextField
+          {...styles.searchFieldProps}
+          value={searchQuery}
+          onChange={handleSearch}
+        />
         <Box {...styles.sortBoxProps}>
           <Select
             value={sortBy}
@@ -108,7 +123,7 @@ const HomePage = (props) => {
         </Box>
       </Grid>
       <ToolsListingContainer
-        data={data}
+        data={filteredData}
         loading={loading}
         category="Marvel Tools"
         sortBy={sortBy}
