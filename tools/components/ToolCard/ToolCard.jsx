@@ -1,7 +1,5 @@
 import { AutoAwesome, Star, StarBorder } from "@mui/icons-material";
 import { Card, Chip, Grid, Typography, IconButton } from "@mui/material";
-import { useState } from "react";
-
 import { useRouter } from "next/router";
 
 import styles from "./styles";
@@ -16,14 +14,22 @@ import { TOOLS_ID } from "@/tools/libs/constants/tools";
  * @prop {string} backgroundImgURL - The URL of the background image.
  * @prop {string} name - The name of the tool.
  * @prop {string} description - The description of the tool.
+ * @prop {boolean} isFavorited - Whether the tool is favorited.
+ * @prop {function} onFavoriteToggle - Handler for favorite toggle.
  *
  * @return {JSX.Element} The Tool Card component.
  */
 const ToolCard = (props) => {
-  const { id, maskedToolUrl, backgroundImgURL, name, description } = props;
-  const [isFavorite, setIsFavorite] = useState(false);
+  const {
+    id,
+    maskedToolUrl,
+    backgroundImgURL,
+    name,
+    description,
+    isFavorited,
+    onFavoriteToggle,
+  } = props;
 
-  // Check if TOOLS_ID is an object and id is present
   const isPublished =
     TOOLS_ID &&
     typeof TOOLS_ID === "object" &&
@@ -39,8 +45,7 @@ const ToolCard = (props) => {
 
   const handleFavorite = (event) => {
     event.stopPropagation();
-    setIsFavorite(!isFavorite);
-    // Here you would also want to save this to your backend/localStorage
+    onFavoriteToggle();
   };
 
   const renderTitle = () => {
@@ -65,7 +70,7 @@ const ToolCard = (props) => {
           {...styles.labelProps(isPublished)}
         />
         <IconButton onClick={handleFavorite} sx={{ color: "#AC92FF" }}>
-          {isFavorite ? <Star /> : <StarBorder />}
+          {isFavorited ? <Star /> : <StarBorder />}
         </IconButton>
       </Grid>
     );

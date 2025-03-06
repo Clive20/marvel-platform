@@ -1,9 +1,9 @@
-import { Grid, Typography } from '@mui/material';
-import { TOOLS_ID } from '@/tools/libs/constants/tools';
+import { Grid, Typography } from "@mui/material";
+import { TOOLS_ID } from "@/tools/libs/constants/tools";
 
-import styles from './styles';
+import styles from "./styles";
 
-import ToolCard, { ToolCardSkeleton } from '@/tools/components/ToolCard';
+import ToolCard, { ToolCardSkeleton } from "@/tools/components/ToolCard";
 
 const DEFAULT_TOOLS = new Array(8)
   .fill()
@@ -15,10 +15,11 @@ const DEFAULT_TOOLS = new Array(8)
  * @param {object} props - The props object containing data and the category.
  * @param {object} props.data - The data to be rendered.
  * @param {object} props.category - The category of the tools.
+ * @param {function} props.onFavoriteToggle - Handler for favorite toggle
  * @return {JSX.Element} The rendered Tools Listings component.
  */
 const ToolsListingContainer = (props) => {
-  const { data, loading, category } = props;
+  const { data, loading, category, onFavoriteToggle } = props;
 
   const renderTitle = () => {
     return (
@@ -34,7 +35,7 @@ const ToolsListingContainer = (props) => {
     const sortedTools = [...(data || [])].sort((a, b) => {
       const aInToolsId = Object.values(TOOLS_ID).includes(a.id);
       const bInToolsId = Object.values(TOOLS_ID).includes(b.id);
-      
+
       if (aInToolsId && !bInToolsId) return -1;
       if (!aInToolsId && bInToolsId) return 1;
       return 0;
@@ -44,7 +45,12 @@ const ToolsListingContainer = (props) => {
       <Grid {...styles.containerGridProps}>
         <Grid {...styles.innerListGridProps}>
           {sortedTools?.map((tool) => (
-            <ToolCard key={tool.id} {...tool} />
+            <ToolCard
+              key={tool.id}
+              {...tool}
+              onFavoriteToggle={() => onFavoriteToggle(tool.id)}
+              isFavorited={tool.isFavorited}
+            />
           ))}
         </Grid>
       </Grid>

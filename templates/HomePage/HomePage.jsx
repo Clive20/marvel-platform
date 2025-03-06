@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { Search } from "@mui/icons-material";
+import { Search, KeyboardArrowDown } from "@mui/icons-material";
 import {
   Box,
   Grid,
@@ -30,9 +30,20 @@ const HomePage = (props) => {
   const [currentTab, setCurrentTab] = useState(TABS[0]);
   const [sortBy, setSortBy] = useState("id");
   const [searchQuery, setSearchQuery] = useState("");
+  const [favorites, setFavorites] = useState([]);
 
   const handleSearch = (event) => {
     setSearchQuery(event.target.value);
+  };
+
+  const handleFavoriteToggle = (toolId) => {
+    setFavorites((prev) => {
+      if (prev.includes(toolId)) {
+        return prev.filter((id) => id !== toolId);
+      } else {
+        return [...prev, toolId];
+      }
+    });
   };
 
   const filteredData = data.filter(
@@ -40,6 +51,11 @@ const HomePage = (props) => {
       item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       item.description.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  const enhancedData = filteredData.map((tool) => ({
+    ...tool,
+    isFavorited: favorites.includes(tool.id),
+  }));
 
   const renderWelcomeBanner = () => {
     return (
@@ -116,17 +132,27 @@ const HomePage = (props) => {
             onChange={(e) => setSortBy(e.target.value)}
             {...styles.sortSelectProps}
           >
-            <MenuItem value="id">Default</MenuItem>
-            <MenuItem value="name">Name</MenuItem>
-            <MenuItem value="recent">Recent</MenuItem>
+            <MenuItem value="Popularity">Most Popular</MenuItem>
+            <MenuItem value="Recent">Recently Added</MenuItem>
+            <MenuItem value="Recommended">Reccomended</MenuItem>
+            <MenuItem value="A">A-Z</MenuItem>
+            <MenuItem value="Z">Z-A</MenuItem>
           </Select>
         </Box>
       </Grid>
       <ToolsListingContainer
-        data={filteredData}
+        data={enhancedData.filter((tool) => tool.isFavorited)}
+        loading={loading}
+        category="Favourites"
+        sortBy={sortBy}
+        onFavoriteToggle={handleFavoriteToggle}
+      />
+      <ToolsListingContainer
+        data={enhancedData}
         loading={loading}
         category="Marvel Tools"
         sortBy={sortBy}
+        onFavoriteToggle={handleFavoriteToggle}
       />
     </Grid>
   );

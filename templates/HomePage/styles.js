@@ -175,12 +175,23 @@ const styles = {
   },
   sortSelectProps: {
     size: "small",
+    MenuProps: {
+      PaperProps: {
+        sx: {
+          border: "1.63px solid #AC92FF",
+          borderRadius: "12px",
+          backgroundColor: "#1A1A1A",
+          marginTop: "8px",
+          boxShadow: "none",
+        },
+      },
+    },
     sx: {
       ".MuiSelect-select": {
         border: "1.63px solid #AC92FF",
         borderRadius: "20px",
         background: "transparent",
-        color: "#AC92FF",
+        color: "#BDBDBD",
         padding: "8px 32px 8px 16px",
         fontFamily: "Satoshi Bold",
         fontSize: "14px",
@@ -199,7 +210,7 @@ const styles = {
       "& .MuiSvgIcon-root": {
         color: "#6E6D73",
       },
-      minWidth: "150px",
+      minWidth: "200px",
     },
   },
 };
