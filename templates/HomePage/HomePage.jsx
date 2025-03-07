@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import { Search, KeyboardArrowDown } from "@mui/icons-material";
 import {
@@ -31,6 +31,11 @@ const HomePage = (props) => {
   const [sortBy, setSortBy] = useState("id");
   const [searchQuery, setSearchQuery] = useState("");
   const [favorites, setFavorites] = useState([]);
+  const [toolUsage, setToolUsage] = useState(() => {
+    // Initialize from localStorage if available
+    const savedUsage = localStorage.getItem("toolUsage");
+    return savedUsage ? JSON.parse(savedUsage) : {};
+  });
 
   const handleSearch = (event) => {
     setSearchQuery(event.target.value);
@@ -46,16 +51,74 @@ const HomePage = (props) => {
     });
   };
 
+  // Track tool usage
+  const handleToolUse = (toolId) => {
+    setToolUsage((prev) => {
+      const newUsage = {
+        ...prev,
+        [toolId]: {
+          count: (prev[toolId]?.count || 0) + 1,
+          lastUsed: new Date().toISOString(),
+        },
+      };
+      // Save to localStorage
+      localStorage.setItem("toolUsage", JSON.stringify(newUsage));
+      return newUsage;
+    });
+  };
+
+  const sortData = (data, sortType) => {
+    const sortedData = [...data];
+    switch (sortType) {
+      case "A":
+        return sortedData.sort((a, b) => a.name.localeCompare(b.name));
+      case "Z":
+        return sortedData.sort((a, b) => b.name.localeCompare(a.name));
+      case "Recent":
+        return sortedData; // Keep existing order for now
+      case "Popularity":
+        return sortedData; // Keep existing order for now
+      case "Recommended":
+        return sortedData; // Keep existing order for now
+      default:
+        return sortedData;
+    }
+  };
+
   const filteredData = data.filter(
     (item) =>
       item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       item.description.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const enhancedData = filteredData.map((tool) => ({
+  const enhancedData = sortData(filteredData, sortBy).map((tool) => ({
     ...tool,
     isFavorited: favorites.includes(tool.id),
   }));
+
+  // Get recommended tools based on usage
+  const getRecommendedTools = (tools) => {
+    return tools
+      .map((tool) => ({
+        ...tool,
+        usageScore: calculateUsageScore(tool.id),
+      }))
+      .sort((a, b) => b.usageScore - a.usageScore)
+      .slice(0, 8); // Show top 8 recommendations
+  };
+
+  // Calculate usage score based on frequency and recency
+  const calculateUsageScore = (toolId) => {
+    const usage = toolUsage[toolId];
+    if (!usage) return 0;
+
+    const count = usage.count;
+    const daysSinceLastUse =
+      (new Date() - new Date(usage.lastUsed)) / (1000 * 60 * 60 * 24);
+
+    // Score = frequency * recency factor
+    return count * Math.exp(-daysSinceLastUse / 30); // Decay factor of 30 days
+  };
 
   const renderWelcomeBanner = () => {
     return (
@@ -116,6 +179,39 @@ const HomePage = (props) => {
     );
   };
 
+  const renderToolSections = () => {
+    const sections = [
+      {
+        data: enhancedData.filter((tool) => tool.isFavorited),
+        category: "Favourites",
+        key: "favorites",
+      },
+      {
+        data: enhancedData,
+        category: "Marvel Tools",
+        key: "all",
+      },
+      {
+        data: getRecommendedTools(enhancedData),
+        category: "Recommended for You",
+        key: "recommended",
+        isRecommended: true,
+      },
+    ];
+
+    // Reorder sections if "Recommended" is selected
+    if (sortBy === "Recommended") {
+      const reorderedSections = [
+        sections.find((s) => s.key === "recommended"),
+        sections.find((s) => s.key === "favorites"),
+        sections.find((s) => s.key === "all"),
+      ];
+      return reorderedSections;
+    }
+
+    return sections;
+  };
+
   return (
     <Grid {...styles.mainGridProps}>
       {renderWelcomeBanner()}
@@ -134,26 +230,24 @@ const HomePage = (props) => {
           >
             <MenuItem value="Popularity">Most Popular</MenuItem>
             <MenuItem value="Recent">Recently Added</MenuItem>
-            <MenuItem value="Recommended">Reccomended</MenuItem>
+            <MenuItem value="Recommended">Recommended</MenuItem>
             <MenuItem value="A">A-Z</MenuItem>
             <MenuItem value="Z">Z-A</MenuItem>
           </Select>
         </Box>
       </Grid>
-      <ToolsListingContainer
-        data={enhancedData.filter((tool) => tool.isFavorited)}
-        loading={loading}
-        category="Favourites"
-        sortBy={sortBy}
-        onFavoriteToggle={handleFavoriteToggle}
-      />
-      <ToolsListingContainer
-        data={enhancedData}
-        loading={loading}
-        category="Marvel Tools"
-        sortBy={sortBy}
-        onFavoriteToggle={handleFavoriteToggle}
-      />
+      {renderToolSections().map((section) => (
+        <ToolsListingContainer
+          key={section.key}
+          data={section.data}
+          loading={loading}
+          category={section.category}
+          sortBy={sortBy}
+          onFavoriteToggle={handleFavoriteToggle}
+          onToolUse={handleToolUse}
+          isRecommended={section.isRecommended}
+        />
+      ))}
     </Grid>
   );
 };

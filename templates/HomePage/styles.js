@@ -105,7 +105,7 @@ const styles = {
         fontFamily: "Satoshi Bold",
         fontSize: "14px",
         padding: "0",
-        height: "34px",
+        height: "40px",
       },
       fieldset: {
         border: "none",
@@ -137,7 +137,7 @@ const styles = {
         borderRadius: "20px",
         background: "transparent",
         color: "#AC92FF",
-        height: "40px",
+        height: "50px",
         display: "flex",
         alignItems: "center",
       },
@@ -179,7 +179,7 @@ const styles = {
       PaperProps: {
         sx: {
           border: "1.63px solid #AC92FF",
-          borderRadius: "12px",
+          borderRadius: "20px",
           backgroundColor: "#1A1A1A",
           marginTop: "8px",
           boxShadow: "none",
@@ -189,7 +189,7 @@ const styles = {
     sx: {
       ".MuiSelect-select": {
         border: "1.63px solid #AC92FF",
-        borderRadius: "20px",
+        borderRadius: "25px",
         background: "transparent",
         color: "#BDBDBD",
         padding: "8px 32px 8px 16px",

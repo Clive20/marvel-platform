@@ -16,6 +16,9 @@ import { TOOLS_ID } from "@/tools/libs/constants/tools";
  * @prop {string} description - The description of the tool.
  * @prop {boolean} isFavorited - Whether the tool is favorited.
  * @prop {function} onFavoriteToggle - Handler for favorite toggle.
+ * @prop {function} onToolUse - Handler for tool usage.
+ * @prop {number} usageScore - The usage score of the tool.
+ * @prop {boolean} isRecommended - Whether the tool is recommended.
  *
  * @return {JSX.Element} The Tool Card component.
  */
@@ -28,6 +31,9 @@ const ToolCard = (props) => {
     description,
     isFavorited,
     onFavoriteToggle,
+    onToolUse,
+    usageScore,
+    isRecommended,
   } = props;
 
   const isPublished =
@@ -39,6 +45,7 @@ const ToolCard = (props) => {
 
   const handleRoute = () => {
     if (isPublished) {
+      onToolUse?.(id);
       router.push(`/${maskedToolUrl}`);
     }
   };
@@ -65,10 +72,24 @@ const ToolCard = (props) => {
         alignItems="center"
         width="100%"
       >
-        <Chip
-          icon={isPublished ? <AutoAwesome /> : null}
-          {...styles.labelProps(isPublished)}
-        />
+        <Grid item>
+          <Chip
+            icon={isPublished ? <AutoAwesome /> : null}
+            {...styles.labelProps(isPublished)}
+          />
+          {isRecommended && usageScore > 0 && (
+            <Typography
+              sx={{
+                ml: 1,
+                fontSize: "12px",
+                color: "#AC92FF",
+                fontFamily: "Satoshi Regular",
+              }}
+            >
+              Used {Math.round(usageScore)} times
+            </Typography>
+          )}
+        </Grid>
         <IconButton onClick={handleFavorite} sx={{ color: "#AC92FF" }}>
           {isFavorited ? <Star /> : <StarBorder />}
         </IconButton>

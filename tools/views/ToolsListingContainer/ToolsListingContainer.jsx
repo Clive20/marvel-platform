@@ -16,10 +16,19 @@ const DEFAULT_TOOLS = new Array(8)
  * @param {object} props.data - The data to be rendered.
  * @param {object} props.category - The category of the tools.
  * @param {function} props.onFavoriteToggle - Handler for favorite toggle
+ * @param {function} props.onToolUse - Handler for tool use
+ * @param {boolean} props.isRecommended - Indicates if the tools are recommended
  * @return {JSX.Element} The rendered Tools Listings component.
  */
 const ToolsListingContainer = (props) => {
-  const { data, loading, category, onFavoriteToggle } = props;
+  const {
+    data,
+    loading,
+    category,
+    onFavoriteToggle,
+    onToolUse,
+    isRecommended,
+  } = props;
 
   const renderTitle = () => {
     return (
@@ -33,6 +42,9 @@ const ToolsListingContainer = (props) => {
 
   const renderCards = () => {
     const sortedTools = [...(data || [])].sort((a, b) => {
+      if (isRecommended) {
+        return b.usageScore - a.usageScore;
+      }
       const aInToolsId = Object.values(TOOLS_ID).includes(a.id);
       const bInToolsId = Object.values(TOOLS_ID).includes(b.id);
 
@@ -49,7 +61,8 @@ const ToolsListingContainer = (props) => {
               key={tool.id}
               {...tool}
               onFavoriteToggle={() => onFavoriteToggle(tool.id)}
-              isFavorited={tool.isFavorited}
+              onToolUse={onToolUse}
+              isRecommended={isRecommended}
             />
           ))}
         </Grid>
